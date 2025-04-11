@@ -1,8 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head><meta charset="UTF-8" /><title>My IDE</title></head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Replit Clone</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    textarea { width: 100%; height: 300px; font-family: monospace; font-size: 14px; }
+    pre, iframe { width: 100%; height: 300px; margin-top: 20px; border: 1px solid #ccc; }
+    button { padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 5px; margin-top: 10px; }
+    select { margin: 10px 0; padding: 5px; }
+  </style>
+</head>
+<body>
+  <h1>My Replit Clone</h1>
+  <div>
+    <h2>Projects</h2>
+    <ul>
+      <li><button onclick="selectProject('project1')">project1</button></li>
+      <li><button onclick="selectProject('project2')">project2</button></li>
+    </ul>
+  </div>
+  <select id="languageSelect">
+    <option value="python">Python</option>
+    <option value="html">HTML</option>
+  </select>
+  <textarea id="codeEditor" placeholder="Write your code here..."></textarea>
+  <br>
+  <button onclick="runCode()">Run</button>
+  <div id="outputPane"></div>
+
+  <script>
+    let selectedLanguage = 'python';
+
+    document.getElementById('languageSelect').addEventListener('change', function () {
+      selectedLanguage = this.value;
+    });
+
+    function selectProject(name) {
+      alert(`Selected project: ${name}`);
+    }
+
+    async function runCode() {
+      const code = document.getElementById('codeEditor').value;
+      const response = await fetch('https://your-backend-url.onrailway.app/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, language: selectedLanguage })
+      });
+
+      const result = await response.json();
+      const outputPane = document.getElementById('outputPane');
+
+      if (selectedLanguage === 'html') {
+        outputPane.innerHTML = `<iframe srcdoc="${result.stdout || result.error || result.stderr}" sandbox="allow-scripts"></iframe>`;
+      } else {
+        outputPane.innerHTML = `<pre>${result.stdout || result.error || result.stderr}</pre>`;
+      }
+    }
+  </script>
+</body>
 </html>
