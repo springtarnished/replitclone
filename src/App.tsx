@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import ProjectList from './components/ProjectList';
 import Editor from './components/Editor';
 import OutputPane from './components/OutputPane';
+import { runCode } from './api';
 
 const App = () => {
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
@@ -25,12 +26,7 @@ const App = () => {
       <button
         className="mt-2 px-4 py-2 bg-blue-600 text-white rounded"
         onClick={async () => {
-          const res = await fetch('https://your-backend-url.onrailway.app/run', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ code, language })
-          });
-          const data = await res.json();
+          const data = await runCode(code, language);
           setOutput(data.stdout || data.stderr || data.error);
         }}
       >
