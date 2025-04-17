@@ -11,11 +11,14 @@
     <div class="container">
         <div class="editor-pane">
             <h2>Python Code</h2>
-            <textarea id="codeInput" placeholder="print('Hello from the web!')"></textarea>
+            <textarea id="codeInput" placeholder="print('Hello from the web!')" spellcheck="false"></textarea>
             <button id="runButton">Run Code</button>
         </div>
         <div class="output-pane">
-            <h2>Output</h2>
+            <div class="output-header">
+                 <h2>Output</h2>
+                 <button id="clearButton">Clear Output</button>
+            </div>
             <pre id="outputArea">Output will appear here...</pre>
         </div>
     </div>
