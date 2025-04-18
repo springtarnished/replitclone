@@ -1,57 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Python Code Runner</title>
-    <link rel="stylesheet" href="style.css">
-
-    <!-- CodeMirror 6 CSS (for themes & basic UI) -->
-    <link rel="stylesheet" href="https://unpkg.com/@codemirror/basic-setup@0.19.2/dist/index.css">
-    <link rel="stylesheet" href="https://replit.github.io/codemirror-themes/dist/dracula.css">
-
-    <!-- CodeMirror 6 UMD bundles -->
-    <!-- Core state & view -->
-    <script src="https://unpkg.com/@codemirror/state@6.4.1/dist/index.umd.js"></script>
-    <script src="https://unpkg.com/@codemirror/view@6.26.3/dist/index.umd.js"></script>
-    <script src="https://unpkg.com/@codemirror/commands@6.5.0/dist/index.umd.js"></script>
-
-    <!-- Gutter (lineNumbers, active‑gutter) -->
-    <script src="https://unpkg.com/@codemirror/gutter@6.5.0/dist/index.umd.js"></script>
-    <!-- Bracket matching -->
-    <script src="https://unpkg.com/@codemirror/matchbrackets@6.2.0/dist/index.umd.js"></script>
-    <!-- Auto‑close brackets -->
-    <script src="https://unpkg.com/@codemirror/closebrackets@6.3.0/dist/index.umd.js"></script>
-
-    <!-- Language support -->
-    <script src="https://unpkg.com/@codemirror/language@6.10.1/dist/index.umd.js"></script>
-    <script src="https://unpkg.com/@codemirror/lang-python@6.1.6/dist/index.umd.js"></script>
-
-    <!-- Lint & autocomplete -->
-    <script src="https://unpkg.com/@codemirror/lint@6.5.0/dist/index.umd.js"></script>
-    <script src="https://unpkg.com/@codemirror/autocomplete@6.15.0/dist/index.umd.js"></script>
-
-    <!-- Theme -->
-    <script src="https://replit.github.io/codemirror-themes/dist/dracula.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python Code Runner</title>
+  <!-- CodeMirror 6 -->
+  <script type="module" src="https://unpkg.com/@codemirror/basic-setup@0.19.1/dist/index.js"></script>
+  <script type="module" src="https://unpkg.com/@codemirror/lang-python@0.19.0/dist/index.js"></script>
+  <style>
+    :root {
+      --bg: #1e1e1e;
+      --fg: #d4d4d4;
+      --accent: #0e639c;
+      --editor-bg: #252526;
+      --console-bg: #1e1e1e;
+    }
+    body { margin:0; height:100vh; display:grid; grid-template-rows: auto 1fr; background:var(--bg); color:var(--fg); font-family:sans-serif; }
+    #toolbar { padding:0.5rem; background:var(--editor-bg); display:flex; gap:0.5rem; }
+    #toolbar button, #toolbar select { background:var(--bg); color:var(--fg); border:1px solid var(--accent); padding:0.3rem 0.6rem; cursor:pointer; }
+    #main { display:grid; grid-template-columns: 200px 1fr 300px; }
+    #file-tree { background:var(--editor-bg); padding:0.5rem; overflow:auto; }
+    #editor { background:var(--editor-bg); }
+    #console { background:var(--console-bg); color:var(--fg); padding:0.5rem; overflow:auto; font-family:monospace; white-space:pre-wrap; }
+    .panel { border-bottom:1px solid var(--accent); padding-bottom:0.5rem; margin-bottom:0.5rem; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="editor-pane">
-            <h2>Python Code Editor</h2>
-            <div class="controls">
-                <button id="run-button">▶ Run (Ctrl+Enter)</button>
-                <button id="clear-button">Clear Output</button>
-                <span id="status-indicator" class="status ready">Ready</span>
-            </div>
-            <div id="editor"></div>
-        </div>
-        <div class="output-pane">
-            <h2>Console Output</h2>
-            <pre id="output"></pre>
-        </div>
+  <div id="toolbar">
+    <button id="run-btn">Run (⌘+Enter)</button>
+    <button id="stop-btn">Stop</button>
+    <button id="clear-console-btn">Clear Console</button>
+    <select id="py-version"><option>3.9</option><option>3.10</option><option>3.11</option></select>
+    <button id="toggle-theme-btn">Toggle Theme</button>
+    <button id="settings-btn">Settings</button>
+    <button id="help-btn">Help</button>
+  </div>
+  <div id="main">
+    <div id="file-tree" class="panel">
+      <button id="new-file-btn">New File</button>
+      <ul id="files"></ul>
     </div>
+    <div id="editor"></div>
+    <div id="console" class="panel"></div>
+  </div>
+  <script type="module">
+    import {EditorState} from "https://unpkg.com/@codemirror/state@6.4.1/dist/index.js";
+    import {EditorView, keymap, lineNumbers} from "https://unpkg.com/@codemirror/view@6.26.3/dist/index.js";
+    import {defaultKeymap, history, historyKeymap} from "https://unpkg.com/@codemirror/commands@6.5.0/dist/index.js";
+    import {python} from "https://unpkg.com/@codemirror/lang-python@6.1.6/dist/index.js";
 
-    <!-- Your app logic -->
-    <script src="script.js"></script>
+    // Editor setup
+    let controller;
+    const view = new EditorView({
+      state: EditorState.create({
+        doc: "",
+        extensions: [
+          lineNumbers(), history(), python(),
+          keymap.of([...defaultKeymap, ...historyKeymap, {key: "Mod-Enter", run: runCode}])
+        ]
+      }),
+      parent: document.getElementById('editor')
+    });
+
+    // UI elements
+    const runBtn = document.getElementById('run-btn');
+    const stopBtn = document.getElementById('stop-btn');
+    const clearBtn = document.getElementById('clear-console-btn');
+    const consoleEl = document.getElementById('console');
+    const newFileBtn = document.getElementById('new-file-btn');
+    const filesList = document.getElementById('files');
+    const versionSelect = document.getElementById('py-version');
+    const toggleThemeBtn = document.getElementById('toggle-theme-btn');
+
+    // File management
+    let files = JSON.parse(localStorage.getItem('files')||'[]');
+    let currentFile = null;
+    function refreshFiles(){
+      filesList.innerHTML = '';
+      files.forEach(f=>{
+        let li=document.createElement('li'); li.textContent=f;
+        li.onclick=()=>openFile(f);
+        filesList.append(li);
+      });
+    }
+    function openFile(name){
+      saveCurrent();
+      currentFile=name;
+      view.dispatch({changes:{from:0,to:view.state.doc.length,insert:localStorage.getItem('file:'+name)||''}});
+    }
+    function saveCurrent(){ if(currentFile){ localStorage.setItem('file:'+currentFile, view.state.doc.toString()); }}
+    newFileBtn.onclick=()=>{
+      let name=prompt('New file name'); if(!name) return;
+      files.push(name); localStorage.setItem('files',JSON.stringify(files)); refreshFiles(); openFile(name);
+    };
+    view.dispatch = new Proxy(view.dispatch, { apply(target,thisArg,args){ target.apply(thisArg,args); saveCurrent(); }});
+    refreshFiles();
+
+    // Run & stop
+    async function runCode(){
+      clearBtn.click();
+      if(controller) controller.abort();
+      controller=new AbortController();
+      consoleEl.textContent='';
+      let code=view.state.doc.toString();
+      try{
+        let res=await fetch('/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code,version:versionSelect.value}),signal:controller.signal});
+        let j=await res.json();
+        displayOutput(j.output);
+      }catch(e){ if(e.name!=='AbortError') displayOutput(e.toString()); }
+      return true;
+    }
+    runBtn.onclick=runCode;
+    stopBtn.onclick=()=>controller&&controller.abort();
+    clearBtn.onclick=()=>consoleEl.textContent='';
+
+    function displayOutput(text){
+      // clickable tracebacks
+      text=text.replace(/File "<input>", line (\d+)/g,(m,l)=>`File "<input>", line <a href=\"#\" data-line=\"${l}\">${l}</a>`);
+      consoleEl.innerHTML+=text;
+      consoleEl.querySelectorAll('[data-line]').forEach(el=>el.onclick=e=>{
+        let line=+el.getAttribute('data-line'); view.dispatch({selection:{anchor:view.state.doc.line(line).from}});
+        view.focus();
+      });
+    }
+
+    // Theme toggle
+    toggleThemeBtn.onclick=()=>{
+      document.documentElement.classList.toggle('light');
+      if(document.documentElement.classList.contains('light')){
+        document.documentElement.style.setProperty('--bg','#fff');
+        document.documentElement.style.setProperty('--fg','#000');
+      } else {
+        document.documentElement.style.removeProperty('--bg');
+        document.documentElement.style.removeProperty('--fg');
+      }
+    };
+
+    // Persist version
+    versionSelect.value=localStorage.getItem('pyVersion')||'3.10';
+    versionSelect.onchange=()=>localStorage.setItem('pyVersion',versionSelect.value);
+
+    // Ctrl+S save
+    window.addEventListener('keydown',e=>{ if(e.ctrlKey&&e.key==='s'){ e.preventDefault(); saveCurrent(); alert('Saved'); }});
+  </script>
 </body>
 </html>
