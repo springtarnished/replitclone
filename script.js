@@ -277,8 +277,28 @@ const savedScriptsContainer = document.getElementById('savedScripts');
 
 // --- Initialize Ace Editor ---
 function initEditor() {
-    ace.require("ace/ext/language_tools");
+    // Basic initialization first
     editor = ace.edit("editor");
+    editor.session.setMode("ace/mode/python");
+    
+    // Set some basic options
+    editor.setOptions({
+        fontSize: "14px",
+        tabSize: 4,
+        useSoftTabs: true
+    });
+    
+    // Try to add advanced features if available
+    try {
+        ace.require("ace/ext/language_tools");
+        editor.setOptions({
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: true,
+            enableSnippets: true
+        });
+    } catch (e) {
+        console.log("Language tools not available, continuing with basic editor");
+    }
     
     // Set default theme based on saved preference or system preference
     const savedTheme = localStorage.getItem(THEME_KEY);
@@ -292,18 +312,6 @@ function initEditor() {
     // Apply theme
     updateTheme();
     
-    // Set editor options
-    editor.session.setMode("ace/mode/python");
-    editor.setOptions({
-        enableBasicAutocompletion: true,
-        enableLiveAutocompletion: true,
-        enableSnippets: true,
-        fontSize: "14px",
-        fontFamily: "'JetBrains Mono', monospace",
-        useSoftTabs: true,
-        tabSize: 4
-    });
-    
     // Set wrap mode from saved preference
     const savedWrap = localStorage.getItem(WRAP_KEY);
     isWrapping = savedWrap === null ? true : savedWrap === 'true';
@@ -314,6 +322,11 @@ function initEditor() {
     editor.session.on('change', () => {
         localStorage.setItem(CURRENT_SCRIPT_KEY, editor.getValue());
     });
+    
+    // Force editor to refresh size
+    setTimeout(() => {
+        editor.resize();
+    }, 200);
 }
 
 // --- Theme Management ---
