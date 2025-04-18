@@ -5,21 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Python Code Runner</title>
     <link rel="stylesheet" href="style.css">
-    <!-- CodeMirror 6 Imports - Ensure these paths are correct or use CDN links -->
-    <!-- Base -->
+
+    <!-- CodeMirror 6 CSS (for themes & basic UI) -->
+    <link rel="stylesheet" href="https://unpkg.com/@codemirror/basic-setup@0.19.2/dist/index.css">
+    <link rel="stylesheet" href="https://replit.github.io/codemirror-themes/dist/dracula.css">
+
+    <!-- CodeMirror 6 UMD bundles -->
+    <!-- Core state & view -->
     <script src="https://unpkg.com/@codemirror/state@6.4.1/dist/index.umd.js"></script>
     <script src="https://unpkg.com/@codemirror/view@6.26.3/dist/index.umd.js"></script>
     <script src="https://unpkg.com/@codemirror/commands@6.5.0/dist/index.umd.js"></script>
-    <!-- Language Support (Python) -->
+
+    <!-- Gutter (lineNumbers, active‑gutter) -->
+    <script src="https://unpkg.com/@codemirror/gutter@6.5.0/dist/index.umd.js"></script>
+    <!-- Bracket matching -->
+    <script src="https://unpkg.com/@codemirror/matchbrackets@6.2.0/dist/index.umd.js"></script>
+    <!-- Auto‑close brackets -->
+    <script src="https://unpkg.com/@codemirror/closebrackets@6.3.0/dist/index.umd.js"></script>
+
+    <!-- Language support -->
     <script src="https://unpkg.com/@codemirror/language@6.10.1/dist/index.umd.js"></script>
     <script src="https://unpkg.com/@codemirror/lang-python@6.1.6/dist/index.umd.js"></script>
-    <!-- Common Extensions -->
-    <script src="https://unpkg.com/@codemirror/highlight@0.1.3/dist/index.umd.js"></script> <!-- If using separate highlighter -->
+
+    <!-- Lint & autocomplete -->
     <script src="https://unpkg.com/@codemirror/lint@6.5.0/dist/index.umd.js"></script>
     <script src="https://unpkg.com/@codemirror/autocomplete@6.15.0/dist/index.umd.js"></script>
-     <!-- Theme (Example: Dracula) -->
-    <script src="https://replit.github.io/codemirror-themes/dist/dracula.js"></script> <!-- From a common CDN alternative for themes -->
 
+    <!-- Theme -->
+    <script src="https://replit.github.io/codemirror-themes/dist/dracula.js"></script>
 </head>
 <body>
     <div class="container">
@@ -28,18 +41,17 @@
             <div class="controls">
                 <button id="run-button">▶ Run (Ctrl+Enter)</button>
                 <button id="clear-button">Clear Output</button>
-                 <span id="status-indicator" class="status">Ready</span>
+                <span id="status-indicator" class="status ready">Ready</span>
             </div>
-            <div id="editor"></div> <!-- CodeMirror will attach here -->
+            <div id="editor"></div>
         </div>
-
         <div class="output-pane">
             <h2>Console Output</h2>
             <pre id="output"></pre>
         </div>
     </div>
 
-    <!-- Load App Logic AFTER CodeMirror libraries -->
+    <!-- Your app logic -->
     <script src="script.js"></script>
 </body>
 </html>
