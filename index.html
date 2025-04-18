@@ -3,16 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Python Runner</title>
+    <title>Enhanced Python Runner</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Add Ace Editor CSS (optional, but helps with styling) -->
+    <style type="text/css" media="screen">
+        #editor {
+            position: relative; /* Needed for Ace editor positioning */
+            flex-grow: 1;
+            min-height: 300px; /* Match textarea previous min-height */
+            border: 1px solid #ccc;
+            box-sizing: border-box; /* Include border in size */
+        }
+    </style>
 </head>
 <body>
-    <h1>Simple Python Runner</h1>
+    <h1>Enhanced Python Runner</h1>
     <div class="container">
         <div class="editor-pane">
             <h2>Python Code</h2>
-            <textarea id="codeInput" placeholder="print('Hello from the web!')" spellcheck="false"></textarea>
-            <button id="runButton">Run Code</button>
+            <!-- Remove textarea, add Ace editor container -->
+            <div id="editor"></div>
+            <div class="run-controls">
+                <button id="runButton">Run Code</button>
+                <!-- Add spinner element, initially hidden -->
+                <span id="spinner" class="spinner" style="display: none;">⏳</span>
+            </div>
         </div>
         <div class="output-pane">
             <div class="output-header">
@@ -23,6 +38,14 @@
         </div>
     </div>
 
+    <!-- Load Ace Editor Core -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.33.0/ace.js" integrity="sha512-/WHThP/o37/D4hqFmfkZNzRub8fGxX108fL9blj8M6F65vFfR267N6b2e8f90u715m0kK4Lq0+o7rRLRkTSAA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Load Ace Editor Python mode -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.33.0/mode-python.js" integrity="sha512-LQAenB1UuLXuO34b7sI0s+DkKAxMbk0Q9U+u5L+eA6llXzfYy/Bzb/j9Uv7n/w+V5/L/Q2/t+24XhC7j61fVew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Load an Ace Editor theme (e.g., Monokai) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.33.0/theme-monokai.js" integrity="sha512-8rTvUmcLA5YjFfM29iZ7UPpvPqC+Jp3/FvB/9F+UaK+n46Qh1Q/2Y0n98LzWGUUT/w62+s7/x1L4N+mS6xkkjg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- Your existing script -->
     <script src="script.js"></script>
 </body>
 </html>

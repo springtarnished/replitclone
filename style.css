@@ -1,3 +1,4 @@
+/* General Body and Typography */
 body {
     font-family: sans-serif;
     margin: 0; /* Remove default margin */
@@ -20,10 +21,10 @@ h2 {
     color: #555;
 }
 
-
+/* Main Layout Container */
 .container {
     display: flex;
-    flex-wrap: wrap; /* Keep wrapping enabled */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
     gap: 20px;
     max-width: 1200px;
     margin: 20px auto;
@@ -33,6 +34,7 @@ h2 {
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
+/* Editor and Output Panes */
 .editor-pane, .output-pane {
     flex: 1; /* Each pane takes up equal space */
     min-width: 300px; /* Minimum width before wrapping */
@@ -40,16 +42,25 @@ h2 {
     flex-direction: column;
 }
 
-textarea#codeInput {
+/* Ace Editor Styling */
+/* Basic sizing/border can be in index.html <style> or here */
+#editor {
+    position: relative; /* Needed for Ace editor positioning */
     flex-grow: 1;
     min-height: 300px;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 1rem;
     border: 1px solid #ccc;
-    padding: 10px;
-    margin-bottom: 10px;
-    resize: vertical;
     box-sizing: border-box;
+    /* Set base font styles (Ace might override some specifics) */
+    font-size: 1rem;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* Run Button and Spinner Controls */
+.run-controls {
+    display: flex; /* Align button and spinner horizontally */
+    align-items: center; /* Vertically center items */
+    margin-top: 10px; /* Space above the controls */
+    gap: 10px; /* Space between button and spinner */
 }
 
 button#runButton {
@@ -61,7 +72,6 @@ button#runButton {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.2s ease;
-    align-self: flex-start; /* Align button to the start of the flex container */
 }
 
 button#runButton:hover {
@@ -73,11 +83,32 @@ button#runButton:disabled {
     cursor: not-allowed;
 }
 
+/* Loading Spinner Style */
+.spinner {
+    font-size: 1.2rem; /* Adjust size as needed */
+    /* If using a CSS animation instead of emoji: */
+    /* display: inline-block; */
+    /* border: 3px solid #f3f3f3; */ /* Light grey */
+    /* border-top: 3px solid #007bff; */ /* Blue */
+    /* border-radius: 50%; */
+    /* width: 16px; */
+    /* height: 16px; */
+    /* animation: spin 1s linear infinite; */
+}
+
+/* Keyframes for CSS spinner animation */
+/* @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+} */
+
+
+/* Output Area Styling */
 .output-header {
     display: flex;
     justify-content: space-between; /* Puts h2 on left, button on right */
     align-items: center; /* Vertically align items */
-    margin-bottom: 10px; /* Add space below header */
+    margin-bottom: 10px; /* Space below header */
 }
 
 .output-header h2 {
@@ -101,58 +132,71 @@ button#clearButton:hover {
 }
 
 pre#outputArea {
-    flex-grow: 1;
+    flex-grow: 1; /* Output area fills available vertical space */
     background-color: #e9e9e9;
     border: 1px solid #ccc;
     padding: 10px;
-    min-height: 310px;
-    overflow-y: auto;
-    white-space: pre-wrap;
-    word-wrap: break-word;
+    min-height: 310px; /* Approximate initial height */
+    overflow-y: auto; /* Add scrollbar if content overflows */
+    white-space: pre-wrap; /* Wrap long lines */
+    word-wrap: break-word; /* Break long words */
     font-family: 'Courier New', Courier, monospace;
     font-size: 0.95rem;
     box-sizing: border-box;
     color: #333; /* Default text color */
 }
 
-/* Style for stderr output */
+/* Error Styling */
 .stderr-output {
     color: #dc3545; /* Bootstrap's danger color (red) */
-    font-weight: bold;
+    font-weight: bold; /* Make stderr stand out */
 }
 
-/* Style for general error messages (timeout, etc.) */
 .error-message {
-    color: #dc3545;
-    font-style: italic;
+    color: #dc3545; /* Use same red for other errors */
+    font-style: italic; /* Italicize non-stderr errors (like timeout) */
 }
 
-/* Basic Responsive */
+/* Basic Responsive Design */
 @media (max-width: 768px) {
+    body {
+        padding: 10px; /* Reduce padding on smaller screens */
+    }
+
     .container {
         flex-direction: column; /* Stack panes vertically */
+        padding: 15px;
     }
 
     .editor-pane, .output-pane {
         min-width: 100%; /* Allow panes to take full width */
     }
 
-     pre#outputArea {
-        min-height: 200px; /* Adjust height for smaller screens if needed */
-    }
-     textarea#codeInput {
-        min-height: 250px;
+    pre#outputArea {
+        min-height: 200px; /* Adjust height for smaller screens */
     }
 
-     button#runButton {
-        width: 100%; /* Make run button full width */
-        box-sizing: border-box;
-     }
-     .output-header {
+    #editor {
+        min-height: 250px; /* Adjust editor height */
+    }
+
+    .run-controls {
+        /* Optional: Make controls span width */
+        /* width: 100%; */
+        justify-content: flex-start; /* Keep controls aligned left */
+    }
+
+    /* Optional: Make run button wider on small screens */
+    /* button#runButton {
+        flex-grow: 1;
+    } */
+
+    .output-header {
         flex-direction: column; /* Stack header elements */
         align-items: flex-start; /* Align header elements left */
-     }
-     .output-header h2 {
-        margin-bottom: 5px;
-     }
+    }
+
+    .output-header h2 {
+        margin-bottom: 5px; /* Space between stacked header elements */
+    }
 }

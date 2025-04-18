@@ -1,25 +1,34 @@
-const codeInput = document.getElementById('codeInput');
+// --- IMPORTANT: Backend URL and Local Storage Key remain the same ---
+const BACKEND_URL = 'https://web-production-c3cd2.up.railway.app/run'; // Use your actual URL
+const LOCAL_STORAGE_KEY = 'pythonCode';
+
+// --- Get DOM Elements ---
+// const codeInput = document.getElementById('codeInput'); // Remove this
 const runButton = document.getElementById('runButton');
 const outputArea = document.getElementById('outputArea');
-const clearButton = document.getElementById('clearButton'); // Get the clear button
+const clearButton = document.getElementById('clearButton');
+const spinner = document.getElementById('spinner'); // Get spinner element
 
-// --- IMPORTANT ---
-// Replace this URL with the actual URL provided by Railway after deploying your backend
-const BACKEND_URL = 'https://web-production-c3cd2.up.railway.app/run';
-// Example: const BACKEND_URL = 'https://my-python-runner-prod.up.railway.app/run';
-// For local testing (if backend runs on port 8080):
-// const BACKEND_URL = 'http://localhost:8080/run';
+// --- Initialize Ace Editor ---
+var editor = ace.edit("editor"); // Use the ID of the div
+editor.setTheme("ace/theme/monokai"); // Set theme
+editor.session.setMode("ace/mode/python"); // Set language mode
+editor.setOptions({
+    fontSize: "1rem", // Match font size if desired
+    useSoftTabs: true,
+    tabSize: 4,
+    wrap: true // Enable line wrapping
+});
 
-const LOCAL_STORAGE_KEY = 'pythonCode';
 
 // --- Load Code from Local Storage on Page Load ---
 function loadCode() {
     const savedCode = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (savedCode) {
-        codeInput.value = savedCode;
+        editor.setValue(savedCode, -1); // Use editor.setValue(), -1 moves cursor to start
     } else {
-        // Optional: Set default code if nothing is saved
-        codeInput.value = `import sys
+        // Set default code in the editor
+        editor.setValue(`import sys
 import platform
 
 print("Hello from Python!")
@@ -28,25 +37,27 @@ print(f"OS: {platform.system()} {platform.release()}")
 
 # Example with an error (uncomment to test stderr)
 # print(1 / 0)
-`;
+`, -1); // -1 moves cursor to start
     }
 }
 
-// --- Save Code to Local Storage on Input ---
-codeInput.addEventListener('input', () => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, codeInput.value);
+// --- Save Code to Local Storage on Editor Change ---
+editor.session.on('change', () => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, editor.getValue());
 });
 
 // --- Run Code Logic ---
 runButton.addEventListener('click', async () => {
-    const pythonCode = codeInput.value;
-    // Save one last time before running (optional, input event should cover it)
+    const pythonCode = editor.getValue(); // Get code from Ace editor
+    // Save one last time (optional, change event should cover it)
     localStorage.setItem(LOCAL_STORAGE_KEY, pythonCode);
 
-    outputArea.textContent = 'Running...'; // Provide feedback
-    outputArea.className = ''; // Reset classes
-    runButton.disabled = true; // Disable button while running
-    runButton.textContent = 'Running...'; // Change button text
+    // Show loading state
+    outputArea.textContent = 'Running...';
+    outputArea.className = '';
+    runButton.disabled = true;
+    runButton.textContent = 'Running...';
+    spinner.style.display = 'inline-block'; // Show spinner
 
     try {
         const response = await fetch(BACKEND_URL, {
@@ -57,62 +68,53 @@ runButton.addEventListener('click', async () => {
             body: JSON.stringify({ code: pythonCode }),
         });
 
-        // Clear previous output before adding new results
-        outputArea.textContent = '';
-
+        outputArea.textContent = ''; // Clear 'Running...' message
         const data = await response.json();
 
         if (!response.ok) {
-            // Handle HTTP errors (e.g., 400, 500) from Flask itself
             outputArea.innerHTML = `<span class="error-message">Server Error: ${response.status} ${response.statusText}<br>${data.error || 'Unknown server error'}</span>`;
         } else {
-            // Handle backend execution results (success or Python errors)
-
-            // Display general errors (like timeout)
+            // Display results (same logic as before)
             if (data.error) {
                  const errorSpan = document.createElement('span');
                  errorSpan.className = 'error-message';
                  errorSpan.textContent = data.error;
                  outputArea.appendChild(errorSpan);
-                 outputArea.appendChild(document.createElement('br')); // Newline
+                 outputArea.appendChild(document.createElement('br'));
             }
-
-            // Display standard output
             if (data.stdout) {
                  const stdoutSpan = document.createElement('span');
                  stdoutSpan.textContent = data.stdout;
                  outputArea.appendChild(stdoutSpan);
             }
-
-            // Display standard error (styled differently)
             if (data.stderr) {
                  const stderrSpan = document.createElement('span');
-                 stderrSpan.className = 'stderr-output'; // Apply error styling
+                 stderrSpan.className = 'stderr-output';
                  stderrSpan.textContent = data.stderr;
                  outputArea.appendChild(stderrSpan);
             }
-
-             // If no output or errors at all
             if (!data.stdout && !data.stderr && !data.error) {
                 outputArea.textContent = '(No output)';
             }
         }
 
     } catch (error) {
-        // Handle network errors or issues parsing JSON
         console.error('Fetch error:', error);
+        outputArea.textContent = ''; // Clear 'Running...'
         outputArea.innerHTML = `<span class="error-message">Network error or failed to connect to backend:<br>${error.message}</span>`;
     } finally {
-        runButton.disabled = false; // Re-enable button
-        runButton.textContent = 'Run Code'; // Restore button text
+        // Hide loading state
+        runButton.disabled = false;
+        runButton.textContent = 'Run Code';
+        spinner.style.display = 'none'; // Hide spinner
     }
 });
 
-// --- Clear Output Logic ---
+// --- Clear Output Logic (remains the same) ---
 clearButton.addEventListener('click', () => {
     outputArea.textContent = '';
-    outputArea.className = ''; // Reset any error classes
+    outputArea.className = '';
 });
 
 // --- Initial Load ---
-loadCode(); // Load code when the script runs
+loadCode(); // Load code into Ace editor when the script runs
