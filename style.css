@@ -1,553 +1,185 @@
-/* Base styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
+/* Basic Reset & Dark Theme */
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-    background-color: #f8f9fa;
-    color: #212529;
-    line-height: 1.6;
-    padding: 0;
+    font-family: sans-serif;
     margin: 0;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-h1, h2, h3, h4, h5, h6 {
-    color: #212529;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-}
-
-button {
-    cursor: pointer;
-    border: none;
-    font-family: inherit;
-}
-
-/* Header */
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    background-color: #ffffff;
-    border-bottom: 1px solid #dee2e6;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.logo img {
-    height: 2.5rem;
-}
-
-.logo h1 {
-    font-size: 1.5rem;
-    margin: 0;
-    font-weight: 600;
-}
-
-.logo h1 span {
-    color: #3b82f6;
-    font-weight: 700;
-}
-
-.toolbar {
-    display: flex;
-    gap: 1rem;
-}
-
-.toolbar button {
-    background-color: #f1f3f5;
-    color: #495057;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 50%;
+    background-color: #282a36; /* Dracula background */
+    color: #f8f8f2; /* Dracula foreground */
     display: flex;
     justify-content: center;
-    align-items: center;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.toolbar button:hover {
-    background-color: #3b82f6;
-    color: white;
-}
-
-/* Main content */
-main {
-    flex: 1;
-    padding: 1.5rem;
+    align-items: stretch; /* Make container fill height */
+    min-height: 100vh; /* Ensure body takes full viewport height */
+    overflow: hidden; /* Prevent body scrollbars if container is sized well */
 }
 
 .container {
     display: flex;
-    max-width: 1600px;
-    margin: 0 auto;
-    gap: 1.5rem;
-    height: calc(100vh - 13rem);
+    flex-direction: column; /* Stack editor/output vertically */
+    width: 95%;
+    max-width: 1200px;
+    height: calc(100vh - 40px); /* Adjust height considering potential padding/margin */
+    margin: 20px;
+    background-color: #1e1f29; /* Slightly different bg for container */
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    overflow: hidden; /* Important for internal scrolling */
 }
 
-/* Sidebar */
-.sidebar {
-    width: 250px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
+/* Panes */
+.editor-pane, .output-pane {
+    padding: 15px;
     display: flex;
     flex-direction: column;
-    flex-shrink: 0;
 }
 
-.sidebar-section {
-    padding: 1rem;
-    border-bottom: 1px solid #dee2e6;
+.editor-pane {
+    flex-basis: 60%; /* Editor takes more space initially */
+    border-bottom: 1px solid #44475a; /* Separator */
+    min-height: 200px; /* Ensure minimum height */
+    /* Make editor pane itself scrollable if needed, though CM handles internal scroll */
 }
 
-.sidebar-section:last-child {
-    border-bottom: none;
-}
-
-.sidebar-section h3 {
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #6c757d;
-    margin-bottom: 0.75rem;
-}
-
-.sidebar select, .sidebar input {
-    width: 100%;
-    padding: 0.5rem;
-    font-family: inherit;
-    background-color: #f1f3f5;
-    color: #212529;
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-    margin-bottom: 0.5rem;
-}
-
-.save-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.save-controls input {
-    flex: 1;
-    margin-bottom: 0;
-}
-
-.save-controls button {
-    background-color: #3b82f6;
-    color: white;
-    border-radius: 4px;
-    width: 2rem;
-    height: 2rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.save-controls button:hover {
-    background-color: #2563eb;
-}
-
-#savedScripts {
-    max-height: 180px;
+.output-pane {
+    flex-basis: 40%;
+    min-height: 100px; /* Ensure minimum height */
+    /* Make the output pane scrollable */
     overflow-y: auto;
-    margin-bottom: 0.75rem;
 }
 
-.saved-script {
+h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #bd93f9; /* Dracula purple */
+    font-size: 1.1em;
+    border-bottom: 1px solid #44475a;
+    padding-bottom: 5px;
+}
+
+/* Controls */
+.controls {
+    margin-bottom: 10px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem;
-    border-radius: 4px;
-    margin-bottom: 0.5rem;
-    background-color: #f1f3f5;
-}
-
-.script-name {
-    font-size: 0.875rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    flex: 1;
-}
-
-.script-actions {
-    display: flex;
-    gap: 0.25rem;
-}
-
-.script-actions button {
-    background-color: transparent;
-    color: #6c757d;
-    width: 1.75rem;
-    height: 1.75rem;
-    border-radius: 4px;
-    display: flex;
-    justify-content: center;
+    gap: 10px;
     align-items: center;
 }
 
-.script-actions button:hover {
-    background-color: #ffffff;
-    color: #3b82f6;
-}
-
-.empty-state {
-    font-size: 0.875rem;
-    color: #6c757d;
-    text-align: center;
-    padding: 1rem 0;
-}
-
-.file-ops {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.file-ops button, .upload-label {
-    padding: 0.5rem;
-    background-color: #f1f3f5;
-    color: #495057;
+button {
+    padding: 8px 15px;
+    background-color: #6272a4; /* Dracula comment color */
+    color: #f8f8f2;
+    border: none;
     border-radius: 4px;
-    text-align: center;
     cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
+    font-size: 0.9em;
+    transition: background-color 0.2s ease;
 }
 
-.file-ops button:hover, .upload-label:hover {
-    background-color: #3b82f6;
-    color: white;
+button:hover {
+    background-color: #7b8ab8;
 }
 
-input[type="file"] {
-    display: none;
+button:active {
+    background-color: #50fa7b; /* Dracula green for active state */
+    color: #282a36;
 }
 
-/* Main content area */
-.content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    height: 100%;
-}
-
-.editor-container, .output-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background-color: #ffffff;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.editor-header, .output-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid #dee2e6;
-}
-
-.editor-actions, .output-actions {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.editor-actions button, .output-actions button {
-    background-color: #f1f3f5;
-    color: #495057;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 4px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.editor-actions button:hover, .output-actions button:hover {
-    background-color: #3b82f6;
-    color: white;
-}
-
-.editor-actions button.active {
-    background-color: #3b82f6;
-    color: white;
-}
-
-/* Ace Editor */
-#editor {
-    flex: 1;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
-}
-
-/* Run controls */
-.run-controls {
-    padding: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    border-top: 1px solid #dee2e6;
-}
-
-#runButton {
-    background-color: #3b82f6;
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-#runButton:hover {
-    background-color: #2563eb;
-}
-
-#runButton:disabled {
-    background-color: #6c757d;
+button:disabled {
+    background-color: #44475a; /* Dracula current line */
     cursor: not-allowed;
-}
-
-.shortcut {
-    font-size: 0.75rem;
     opacity: 0.7;
 }
 
-/* Spinner */
-.spinner {
-    display: none;
-    align-items: center;
-    gap: 0.5rem;
-    color: #495057;
-    font-size: 0.875rem;
+/* Status Indicator */
+.status {
+    font-size: 0.9em;
+    margin-left: auto; /* Push to the right */
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+.status.ready {
+    color: #8be9fd; /* Dracula cyan */
+    background-color: rgba(139, 233, 253, 0.1);
+}
+.status.running {
+    color: #f1fa8c; /* Dracula yellow */
+    background-color: rgba(241, 250, 140, 0.1);
+    animation: pulse 1.5s infinite ease-in-out;
+}
+.status.error {
+    color: #ff5555; /* Dracula red */
+    background-color: rgba(255, 85, 85, 0.1);
+}
+.status.success {
+     color: #50fa7b; /* Dracula green */
+     background-color: rgba(80, 250, 123, 0.1);
 }
 
-.spinner-border {
-    width: 1.25rem;
-    height: 1.25rem;
-    border: 2px solid #3b82f6;
-    border-right-color: transparent;
-    border-radius: 50%;
-    animation: spin 0.75s linear infinite;
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
 }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
+
+/* CodeMirror Editor Styling */
+#editor {
+    flex-grow: 1; /* Make editor div fill remaining space in editor-pane */
+    border: 1px solid #44475a; /* Dracula current line/border */
+    border-radius: 4px;
+    overflow: hidden; /* Let CodeMirror handle internal scrolling */
 }
 
-/* Output area */
-#outputArea {
-    flex: 1;
-    background-color: #f8f9fa;
-    padding: 1rem;
-    overflow: auto;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
-    color: #212529;
-    white-space: pre-wrap;
-    word-break: break-word;
+/* CodeMirror container */
+.cm-editor {
+    height: 100%; /* Make CM fill its container */
+    font-size: 14px; /* Adjust font size */
 }
 
-.stdout-output {
-    color: #212529;
+/* Output Area */
+#output {
+    background-color: #282a36; /* Match body background */
+    color: #f8f8f2;
+    padding: 10px;
+    border-radius: 4px;
+    white-space: pre-wrap; /* Wrap long lines but preserve whitespace */
+    word-wrap: break-word; /* Break long words */
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    font-size: 0.9em;
+    flex-grow: 1; /* Allow pre to grow within output-pane */
+    overflow-y: auto; /* Ensure output area itself is scrollable */
+    border: 1px solid #44475a;
+    min-height: 50px; /* Prevent collapsing */
 }
 
+/* Specific styling for stderr messages */
 .stderr-output {
-    color: #ef4444;
-    font-weight: 500;
-}
-
-.error-message {
-    color: #ef4444;
+    color: #ff79c6; /* Dracula pink/red for errors */
     font-style: italic;
 }
-
-/* Fullscreen mode */
-.fullscreen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1000;
-    background-color: #ffffff;
-    padding: 1rem;
+.exit-code-info {
+    color: #ffb86c; /* Dracula orange */
+    font-weight: bold;
+}
+.timeout-error {
+     color: #ff5555; /* Dracula red */
+     font-weight: bold;
 }
 
-/* Footer */
-footer {
-    text-align: center;
-    padding: 1rem;
-    background-color: #ffffff;
-    color: #6c757d;
-    border-top: 1px solid #dee2e6;
-    font-size: 0.875rem;
-}
-
-footer a {
-    color: #3b82f6;
-    text-decoration: none;
-}
-
-footer a:hover {
-    text-decoration: underline;
-}
-
-/* Dark theme */
-body.dark-theme {
-    background-color: #18191a;
-    color: #e4e6eb;
-}
-
-body.dark-theme h1, 
-body.dark-theme h2, 
-body.dark-theme h3 {
-    color: #e4e6eb;
-}
-
-body.dark-theme header,
-body.dark-theme .sidebar,
-body.dark-theme .editor-container,
-body.dark-theme .output-container,
-body.dark-theme footer,
-body.dark-theme .fullscreen {
-    background-color: #242526;
-    border-color: #3e4042;
-}
-
-body.dark-theme .toolbar button,
-body.dark-theme .editor-actions button,
-body.dark-theme .output-actions button,
-body.dark-theme .sidebar select,
-body.dark-theme .sidebar input,
-body.dark-theme .saved-script,
-body.dark-theme .file-ops button,
-body.dark-theme .upload-label {
-    background-color: #3a3b3c;
-    color: #b0b3b8;
-    border-color: #3e4042;
-}
-
-body.dark-theme #outputArea {
-    background-color: #282828;
-    color: #e4e6eb;
-}
-
-body.dark-theme .toolbar button:hover,
-body.dark-theme .editor-actions button:hover,
-body.dark-theme .output-actions button:hover,
-body.dark-theme .file-ops button:hover,
-body.dark-theme .upload-label:hover {
-    background-color: #4f86f7;
-    color: white;
-}
-
-body.dark-theme .editor-actions button.active {
-    background-color: #4f86f7;
-    color: white;
-}
-
-body.dark-theme .stdout-output {
-    color: #e4e6eb;
-}
-
-body.dark-theme .script-actions button:hover {
-    background-color: #3a3b3c;
-    color: #4f86f7;
-}
-
-body.dark-theme footer a {
-    color: #4f86f7;
-}
-
-/* Responsive design */
-@media (max-width: 1024px) {
+/* Responsive adjustments (Optional) */
+@media (max-width: 768px) {
     .container {
         flex-direction: column;
-        height: auto;
-    }
-    
-    .sidebar {
+        height: auto; /* Allow height to adjust based on content */
         width: 100%;
-        flex-direction: row;
-        overflow-x: auto;
+        margin: 0;
+        border-radius: 0;
     }
-    
-    .sidebar-section {
-        border-bottom: none;
-        border-right: 1px solid #dee2e6;
-        min-width: 220px;
+    .editor-pane, .output-pane {
+        flex-basis: auto; /* Reset basis */
+        height: 50vh; /* Give roughly equal height on small screens */
     }
-    
-    .sidebar-section:last-child {
+     .editor-pane {
+        border-bottom: 5px solid #44475a;
         border-right: none;
-    }
-    
-    .editor-container, .output-container {
-        min-height: 300px;
-    }
-    
-    body.dark-theme .sidebar-section {
-        border-right-color: #3e4042;
-    }
-}
-
-@media (max-width: 768px) {
-    header {
-        padding: 0.75rem 1rem;
-    }
-    
-    .logo img {
-        height: 2rem;
-    }
-    
-    .logo h1 {
-        font-size: 1.25rem;
-    }
-    
-    main {
-        padding: 1rem;
-    }
-    
-    .sidebar {
-        flex-direction: column;
-    }
-    
-    .sidebar-section {
-        border-right: none;
-        border-bottom: 1px solid #dee2e6;
-    }
-    
-    body.dark-theme .sidebar-section {
-        border-bottom-color: #3e4042;
-    }
-
-    .shortcut {
-        display: none;
     }
 }
