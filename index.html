@@ -4,23 +4,41 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Python Code Runner</title>
+
+  <!-- CodeMirror 5 -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/codemirror.min.css"
+  />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/mode/python/python.min.js"></script>
+
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>Python Code Runner</h1>
+      <h1>Python Runner</h1>
       <button id="toggle-dark">Toggle Dark Mode</button>
     </header>
 
-    <textarea id="code-input" placeholder="Type your Python code here...">
+    <!-- Snippet library -->
+    <div id="snippet-library">
+      <select id="snippet-select">
+        <option value="">–– choose snippet ––</option>
+      </select>
+      <button id="insert-snippet">Insert Snippet</button>
+    </div>
+
+    <!-- CodeMirror will replace this -->
+    <textarea id="code-input" placeholder="Type Python here…">
 print("Hello, world!")
     </textarea>
 
-    <button id="run-btn">Run Code</button>
+    <button id="run-btn">Run ▶</button>
 
     <div id="output-panel">
-      <h2>Output:</h2>
+      <h2>Output</h2>
       <pre id="output"></pre>
     </div>
   </div>
