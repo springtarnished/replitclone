@@ -1,185 +1,71 @@
-/* Basic Reset & Dark Theme */
 body {
-    font-family: sans-serif;
     margin: 0;
-    background-color: #282a36; /* Dracula background */
-    color: #f8f8f2; /* Dracula foreground */
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    color: #333;
+  }
+  body.dark {
+    background: #2e2e2e;
+    color: #ccc;
+  }
+  
+  .container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+  }
+  
+  header {
     display: flex;
-    justify-content: center;
-    align-items: stretch; /* Make container fill height */
-    min-height: 100vh; /* Ensure body takes full viewport height */
-    overflow: hidden; /* Prevent body scrollbars if container is sized well */
-}
-
-.container {
-    display: flex;
-    flex-direction: column; /* Stack editor/output vertically */
-    width: 95%;
-    max-width: 1200px;
-    height: calc(100vh - 40px); /* Adjust height considering potential padding/margin */
-    margin: 20px;
-    background-color: #1e1f29; /* Slightly different bg for container */
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    overflow: hidden; /* Important for internal scrolling */
-}
-
-/* Panes */
-.editor-pane, .output-pane {
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-}
-
-.editor-pane {
-    flex-basis: 60%; /* Editor takes more space initially */
-    border-bottom: 1px solid #44475a; /* Separator */
-    min-height: 200px; /* Ensure minimum height */
-    /* Make editor pane itself scrollable if needed, though CM handles internal scroll */
-}
-
-.output-pane {
-    flex-basis: 40%;
-    min-height: 100px; /* Ensure minimum height */
-    /* Make the output pane scrollable */
-    overflow-y: auto;
-}
-
-h2 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    color: #bd93f9; /* Dracula purple */
-    font-size: 1.1em;
-    border-bottom: 1px solid #44475a;
-    padding-bottom: 5px;
-}
-
-/* Controls */
-.controls {
-    margin-bottom: 10px;
-    display: flex;
-    gap: 10px;
+    justify-content: space-between;
     align-items: center;
-}
-
-button {
-    padding: 8px 15px;
-    background-color: #6272a4; /* Dracula comment color */
-    color: #f8f8f2;
-    border: none;
-    border-radius: 4px;
+    margin-bottom: 1rem;
+  }
+  
+  textarea#code-input {
+    width: 100%;
+    height: 300px;
+    font-family: monospace;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    background: #fff;
+    color: #000;
+  }
+  
+  body.dark textarea#code-input {
+    background: #1e1e1e;
+    color: #ccc;
+    border-color: #444;
+  }
+  
+  button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
     cursor: pointer;
-    font-size: 0.9em;
-    transition: background-color 0.2s ease;
-}
-
-button:hover {
-    background-color: #7b8ab8;
-}
-
-button:active {
-    background-color: #50fa7b; /* Dracula green for active state */
-    color: #282a36;
-}
-
-button:disabled {
-    background-color: #44475a; /* Dracula current line */
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
-/* Status Indicator */
-.status {
-    font-size: 0.9em;
-    margin-left: auto; /* Push to the right */
-    padding: 5px 10px;
-    border-radius: 4px;
-}
-.status.ready {
-    color: #8be9fd; /* Dracula cyan */
-    background-color: rgba(139, 233, 253, 0.1);
-}
-.status.running {
-    color: #f1fa8c; /* Dracula yellow */
-    background-color: rgba(241, 250, 140, 0.1);
-    animation: pulse 1.5s infinite ease-in-out;
-}
-.status.error {
-    color: #ff5555; /* Dracula red */
-    background-color: rgba(255, 85, 85, 0.1);
-}
-.status.success {
-     color: #50fa7b; /* Dracula green */
-     background-color: rgba(80, 250, 123, 0.1);
-}
-
-
-@keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.6; }
-  100% { opacity: 1; }
-}
-
-
-/* CodeMirror Editor Styling */
-#editor {
-    flex-grow: 1; /* Make editor div fill remaining space in editor-pane */
-    border: 1px solid #44475a; /* Dracula current line/border */
-    border-radius: 4px;
-    overflow: hidden; /* Let CodeMirror handle internal scrolling */
-}
-
-/* CodeMirror container */
-.cm-editor {
-    height: 100%; /* Make CM fill its container */
-    font-size: 14px; /* Adjust font size */
-}
-
-/* Output Area */
-#output {
-    background-color: #282a36; /* Match body background */
+    margin-right: 0.5rem;
+  }
+  
+  body.dark button {
+    background: #444;
+    color: #ccc;
+    border: none;
+  }
+  
+  #output-panel {
+    margin-top: 1.5rem;
+  }
+  
+  #output {
+    background: #272822;
     color: #f8f8f2;
-    padding: 10px;
-    border-radius: 4px;
-    white-space: pre-wrap; /* Wrap long lines but preserve whitespace */
-    word-wrap: break-word; /* Break long words */
-    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-    font-size: 0.9em;
-    flex-grow: 1; /* Allow pre to grow within output-pane */
-    overflow-y: auto; /* Ensure output area itself is scrollable */
-    border: 1px solid #44475a;
-    min-height: 50px; /* Prevent collapsing */
-}
-
-/* Specific styling for stderr messages */
-.stderr-output {
-    color: #ff79c6; /* Dracula pink/red for errors */
-    font-style: italic;
-}
-.exit-code-info {
-    color: #ffb86c; /* Dracula orange */
-    font-weight: bold;
-}
-.timeout-error {
-     color: #ff5555; /* Dracula red */
-     font-weight: bold;
-}
-
-/* Responsive adjustments (Optional) */
-@media (max-width: 768px) {
-    .container {
-        flex-direction: column;
-        height: auto; /* Allow height to adjust based on content */
-        width: 100%;
-        margin: 0;
-        border-radius: 0;
-    }
-    .editor-pane, .output-pane {
-        flex-basis: auto; /* Reset basis */
-        height: 50vh; /* Give roughly equal height on small screens */
-    }
-     .editor-pane {
-        border-bottom: 5px solid #44475a;
-        border-right: none;
-    }
-}
+    padding: 1rem;
+    min-height: 150px;
+    overflow: auto;
+  }
+  
+  body.dark #output {
+    background: #1e1e1e;
+  }
+  
