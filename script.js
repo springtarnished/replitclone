@@ -5,7 +5,7 @@ const clearButton = document.getElementById('clearButton'); // Get the clear but
 
 // --- IMPORTANT ---
 // Replace this URL with the actual URL provided by Railway after deploying your backend
-const BACKEND_URL = 'https://your-railway-app-name.up.railway.app/run';
+const BACKEND_URL = 'https://web-production-c3cd2.up.railway.app/run';
 // Example: const BACKEND_URL = 'https://my-python-runner-prod.up.railway.app/run';
 // For local testing (if backend runs on port 8080):
 // const BACKEND_URL = 'http://localhost:8080/run';
